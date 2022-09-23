@@ -39,7 +39,7 @@ cmd_args = sys.argv
 # @returns - response=(response from layerX containing URL list) 
 def getDataFromServer(callUrl, payload):
     # Get the url list of dataset items from node backend
-    string_key_secret = f'{api_key}:{secret}'
+    string_key_secret = ''#f'{api_key}:{secret}'
     key_secret_bytes = string_key_secret.encode("ascii")
     encoded_key_secret_bytes = base64.b64encode(key_secret_bytes)
     encoded_key_secret = encoded_key_secret_bytes.decode("ascii")
