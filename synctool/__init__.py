@@ -14,25 +14,25 @@ failedDownloadsPresent = False
 # get variables from cmd
 cmd_args = sys.argv
 
-if(len(cmd_args)!=6):
-    print(f"Required 5 arguments but recived {len(cmd_args)-1}")
-    print("arguments: <url> <version ID> <format type> <api key> <secret>")
-    quit()
+# if(len(cmd_args)!=6):
+#     print(f"Required 5 arguments but recived {len(cmd_args)-1}")
+#     print("arguments: <url> <version ID> <format type> <api key> <secret>")
+#     quit()
 
-# get server url
-serverUrl = cmd_args[1]
+# # get server url
+# serverUrl = cmd_args[1]
 
-# get dataset url data from server
-baseUrl = f'{serverUrl}/api/datasetVersion/getVersionData/' 
+# # get dataset url data from server
+# baseUrl = f'{serverUrl}/api/datasetVersion/getVersionData/' 
 
-versionId = cmd_args[2]
-callUrl = baseUrl + versionId + '/'
+# versionId = cmd_args[2]
+# callUrl = baseUrl + versionId + '/'
 
-exportType = cmd_args[3]
-callUrl = callUrl + exportType
+# exportType = cmd_args[3]
+# callUrl = callUrl + exportType
 
-api_key = cmd_args[4]
-secret = cmd_args[5]   
+# api_key = cmd_args[4]
+# secret = cmd_args[5]   
 
 # method to get item URL list from layerX (per page)
 # # @params - callUrl=(Url to get itemlist of given group and version from layerx), payload=(pageNo,pageSize)
@@ -43,6 +43,32 @@ def getDataFromServer(callUrl, payload):
     key_secret_bytes = string_key_secret.encode("ascii")
     encoded_key_secret_bytes = base64.b64encode(key_secret_bytes)
     encoded_key_secret = encoded_key_secret_bytes.decode("ascii")
+
+    hed = {'Authorization': 'Basic ' + encoded_key_secret}
+
+    print(hed)
+    try:
+        callResponse = requests.get(callUrl, params=payload, headers=hed, timeout=10)
+    except:
+        print(f'Error connecting to layerx')
+        print("We are facing a problem with the network, please retry to download missing items")
+        quit()
+    response = callResponse.json()
+    return response
+
+# method to get item URL list from layerX (per page)
+# # @params - callUrl=(Url to get itemlist of given group and version from layerx), payload=(pageNo,pageSize)
+# @returns - response=(response from layerX containing URL list) 
+def getDataFromServerTemp(server, payload, version_id, exportType, api_key, secret):
+    # Get the url list of dataset items from node backend
+    string_key_secret = f'{api_key}:{secret}'
+    key_secret_bytes = string_key_secret.encode("ascii")
+    encoded_key_secret_bytes = base64.b64encode(key_secret_bytes)
+    encoded_key_secret = encoded_key_secret_bytes.decode("ascii")
+
+    baseUrl = f'{server}/api/datasetVersion/getVersionData/'
+    callUrl = baseUrl + version_id + '/' 
+    callUrl = callUrl + exportType
 
     hed = {'Authorization': 'Basic ' + encoded_key_secret}
 
@@ -200,14 +226,36 @@ def getAllPages(callUrl, pageNo):
         quit()
     else:
         print("No data recieved from remote for given group and/or version")
+
+# method to get url list from server and execute the main script for all pages
+# @params - callUrl (Url to get itemlist of given group and version from layerx), pageNo
+def downloadDataSet(server, version_id, exportType, api_key, secret, pageNo = 1):
+    payload = {'pageNo': pageNo, 'pageSize': 250}
+    response = getDataFromServerTemp(server, payload, version_id, exportType, api_key, secret)
+    print('Downloading page no: '+ str(pageNo))
+    if "identifier" in response:
+        
+        # Direct the response to download files
+        initiateDownload(response, pageNo)
+
+        # recursively call this again to get next page
+        if(response['nextPage']==True):
+            nextPageNo = int(pageNo)+1
+            downloadDataSet(server, version_id, exportType, api_key, secret, nextPageNo)
+        print("Download Complete")
+        if failedDownloadsPresent:
+            print("Unfortunately we failed to download everything, please retry to download missing items")
+        quit()
+    else:
+        print("No data recieved from remote for given group and/or version")
         
 # main script below
-def main():
-    # start operation
-    getAllPages(callUrl, 1)
+# def main():
+#     # start operation
+#     getAllPages(callUrl, 1)
 
 # run main method
-main()
+#main()
 # ---------------
 
 

@@ -7,13 +7,13 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.1'
+VERSION = '0.0.8'
 DESCRIPTION = 'Download dataset'
 LONG_DESCRIPTION = 'A package that allows to Download dataset from layerx'
 
 # Setting up
 setup(
-    name="sync-tool",
+    name="synctooltest",
     version=VERSION,
     author="layerx",
     author_email="<annotation.manager.dev@gmail.com>",
@@ -21,7 +21,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=['requests', 'base64'],
+    install_requires=['requests'],
     keywords=['python', 'dataset', 'ai', 'annotation', 'layerx', 'machine learning'],
     classifiers=[
         "Development Status :: 1 - Planning",

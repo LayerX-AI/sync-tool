@@ -1,11 +1,8 @@
 # Script to download images and text files to local machine and generate path file
 import requests
-import json
-import csv
 import os
 import sys
 from multiprocessing.pool import ThreadPool
-import time
 import base64
 
 
@@ -41,6 +38,28 @@ secret = cmd_args[5]
 # # @params - callUrl=(Url to get itemlist of given group and version from layerx), payload=(pageNo,pageSize)
 # @returns - response=(response from layerX containing URL list) 
 def getDataFromServer(callUrl, payload):
+    # Get the url list of dataset items from node backend
+    string_key_secret = f'{api_key}:{secret}'
+    key_secret_bytes = string_key_secret.encode("ascii")
+    encoded_key_secret_bytes = base64.b64encode(key_secret_bytes)
+    encoded_key_secret = encoded_key_secret_bytes.decode("ascii")
+
+    hed = {'Authorization': 'Basic ' + encoded_key_secret}
+
+    print(hed)
+    try:
+        callResponse = requests.get(callUrl, params=payload, headers=hed, timeout=10)
+    except:
+        print(f'Error connecting to layerx')
+        print("We are facing a problem with the network, please retry to download missing items")
+        quit()
+    response = callResponse.json()
+    return response
+
+# method to get item URL list from layerX (per page)
+# # @params - callUrl=(Url to get itemlist of given group and version from layerx), payload=(pageNo,pageSize)
+# @returns - response=(response from layerX containing URL list) 
+def getDataFromServerTemp(callUrl, payload):
     # Get the url list of dataset items from node backend
     string_key_secret = f'{api_key}:{secret}'
     key_secret_bytes = string_key_secret.encode("ascii")

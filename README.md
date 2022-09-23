@@ -1,1 +1,1 @@
-# sync-tool
+# synctool

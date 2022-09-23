@@ -1,9 +1,0 @@
-README.md
-setup.py
-sync-tool/__init__.py
-sync-tool/sync.py
-sync_tool.egg-info/PKG-INFO
-sync_tool.egg-info/SOURCES.txt
-sync_tool.egg-info/dependency_links.txt
-sync_tool.egg-info/requires.txt
-sync_tool.egg-info/top_level.txt
