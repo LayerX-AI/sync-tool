@@ -1,11 +1,8 @@
 # Script to download images and text files to local machine and generate path file
 import requests
-import json
-import csv
 import os
 import sys
 from multiprocessing.pool import ThreadPool
-import time
 import base64
 
 
