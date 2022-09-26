@@ -1,4 +1,4 @@
 !.gitignore
 /build
 /dist
-/synctooltest.egg-info
+/datasetsync.egg-info
